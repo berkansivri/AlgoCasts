@@ -13,7 +13,41 @@
 //       '  #  '
 //       ' ### '
 //       '#####'
+//   pyramid(4)
+//       '   #   '
+//       '  ###  '
+//       ' ##### '
+//       '#######'
 
-function pyramid(n) {}
+// function pyramid(n) {
+//   for (let i = 0; i < n; i++) {
+//     let str = ''
+//     for (let j = 0; j < n * 2 - 1; j++) {
+//       if (j >= n - 1 - i && j <= n - 1 + i) str += '#'
+//       else str += ' '
+//     }
+//     console.log(str)
+//   }
+// }
 
-module.exports = pyramid;
+function pyramid(n, row = 0, str = '') {
+  if (row === n) return
+
+  if (str.length === n * 2 - 1) {
+    console.log(str)
+    return pyramid(n, row + 1)
+  }
+
+  let add = ''
+  if (str.length >= n - 1 - row && str.length <= n - 1 + row) {
+    add = '#'
+  } else {
+    add = ' '
+  }
+
+  return pyramid(n, row, str + add)
+}
+
+pyramid(3)
+
+module.exports = pyramid
