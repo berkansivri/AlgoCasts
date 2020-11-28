@@ -15,34 +15,34 @@ class LinkedList {
   }
 
   insertFirst(data) {
-    const node = new Node(data, this.head);
-    this.head = node;
+    this.insertAt(data, 0);
   }
 
   size() {
     if (!this.head) return 0;
 
     let count = 0,
-      temp = this.head;
-    while (temp) {
+      node = this.head;
+    while (node) {
       count++;
-      temp = temp.next;
+      node = node.next;
     }
     return count;
   }
 
   getFirst() {
-    return this.head;
+    return this.getAt(0);
   }
 
   getLast() {
-    if (!this.head) return null;
+    return this.getAt(this.size() - 1);
+    // if (!this.head) return null;
 
-    let temp = this.head;
-    while (temp.next) {
-      temp = temp.next;
-    }
-    return temp;
+    // let node = this.head;
+    // while (node.next) {
+    //   node = node.next;
+    // }
+    // return node;
   }
 
   clear() {
@@ -50,81 +50,76 @@ class LinkedList {
   }
 
   removeFirst() {
-    this.head = this.head.next;
+    this.removeAt(0);
   }
 
   removeLast() {
-    if (!this.head) return;
-    if (!this.head.next) {
-      this.head = null;
-      return;
-    }
-    let temp = this.head;
-    while (temp.next.next) {
-      temp = temp.next;
-    }
-    temp.next = null;
+    this.removeAt(this.size() - 1);
+    // if (!this.head) return;
+    // if (!this.head.next) {
+    //   this.head = null;
+    //   return;
+    // }
+
+    // let prev = this.head;
+    // let node = prev.next;
+    // while (node.next) {
+    //   prev = node;
+    //   node = node.next;
+    // }
+    // prev.next = null;
   }
 
   insertLast(data) {
-    const last = this.getLast();
-    if (last) last.next = new Node(data);
-    else this.head = new Node(data);
+    this.insertAt(data, this.size());
+    // const last = this.getLast();
+    // if (last) last.next = new Node(data);
+    // else this.insertFirst(data);
   }
 
   getAt(index) {
-    if (!this.head) return null;
-    let i = index,
-      temp = this.head;
-    while (temp && i) {
-      temp = temp.next;
-      i--;
+    let node = this.head;
+    while (node && index--) {
+      node = node.next;
     }
-    return temp;
+    return node;
   }
 
   removeAt(index) {
+    if (!this.head) return;
     if (index === 0) {
-      if (this.head) this.head = this.head.next;
+      this.head = this.head.next;
     } else {
-      const temp = this.getAt(index - 1);
-      if (temp && temp.next) temp.next = temp.next.next;
+      const prevNode = this.getAt(index - 1);
+      if (prevNode && prevNode.next) prevNode.next = prevNode.next.next;
     }
   }
 
   insertAt(data, index) {
     if (index === 0) {
       this.head = new Node(data, this.head);
-    } else if (index <= this.size()) {
-      const prevNode = this.getAt(index - 1);
-      if (prevNode) {
-        const newNode = new Node(data, prevNode.next);
-        prevNode.next = newNode;
-      } else {
-        this.head = new Node(data);
-      }
     } else {
-      this.insertLast(data);
+      const prevNode = this.getAt(index - 1) || this.getLast();
+      prevNode.next = new Node(data, prevNode.next);
     }
   }
 
   forEach(fn) {
-    let temp = this.head;
-    while (temp.next) {
-      fn(temp);
-      temp = temp.next;
+    let node = this.head;
+    let counter = 0;
+    while (node) {
+      fn(node, counter++);
+      node = node.next;
     }
-    fn(temp);
+  }
+
+  *[Symbol.iterator]() {
+    let node = this.head;
+    while (node) {
+      yield node;
+      node = node.next;
+    }
   }
 }
 
 module.exports = { Node, LinkedList };
-
-const l = new LinkedList();
-l.insertLast("a");
-l.insertLast("b");
-l.insertAt("hi", 30);
-
-l.getAt(0).data; // a
-l.getAt(1).data; // b
-l.getAt(2).data; // hi
